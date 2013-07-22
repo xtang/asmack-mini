@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Jonas Ådahl.
+ * Copyright 2009 Jonas dahl.
  * Copyright 2011-2013 Florian Schmaus
  *
  * All rights reserved. Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,14 @@
 
 package org.jivesoftware.smackx.provider;
 
-import java.io.IOException;
-
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.jivesoftware.smackx.entitycaps.packet.CapsExtension;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 public class CapsExtensionProvider implements PacketExtensionProvider {
     private static final int MAX_DEPTH = 10;
