@@ -1,5 +1,5 @@
 /**
- * Copyright 2009 Jonas Ådahl.
+ * Copyright 2009 Jonas dahl.
  * Copyright 2011-2013 Florian Schmaus
  *
  * All rights reserved. Licensed under the Apache License, Version 2.0 (the "License");
