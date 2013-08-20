@@ -479,7 +479,6 @@ public class XMPPConnection extends Connection {
             roster.cleanup();
             roster = null;
         }
-        chatManager = null;
 
         wasAuthenticated = false;
 
@@ -694,7 +693,6 @@ public class XMPPConnection extends Connection {
                 socket = null;
             }
             this.setWasAuthenticated(authenticated);
-            chatManager = null;
             authenticated = false;
             connected = false;
 

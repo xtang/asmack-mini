@@ -20,8 +20,15 @@
 
 package org.jivesoftware.smack;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 import org.jivesoftware.smack.Connection.ListenerWrapper;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.parsing.ParsingExceptionCallback;
 import org.jivesoftware.smack.parsing.UnparsedIQ;
 import org.jivesoftware.smack.parsing.UnparsedMessage;
@@ -30,12 +37,9 @@ import org.jivesoftware.smack.sasl.SASLMechanism.Challenge;
 import org.jivesoftware.smack.sasl.SASLMechanism.Failure;
 import org.jivesoftware.smack.sasl.SASLMechanism.Success;
 import org.jivesoftware.smack.util.PacketParserUtils;
-
-import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
-import java.util.concurrent.*;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
  * Listens for XML traffic from the XMPP server and parses it into packet objects.
@@ -50,7 +54,7 @@ class PacketReader {
     private Thread readerThread;
     private ExecutorService listenerExecutor;
 
-    private XMPPConnection connection;
+    private final XMPPConnection connection;
     private XmlPullParser parser;
     volatile boolean done;
 
@@ -70,7 +74,8 @@ class PacketReader {
         connectionID = null;
 
         readerThread = new Thread() {
-            public void run() {
+            @Override
+			public void run() {
                 parsePackets(this);
             }
         };
@@ -81,7 +86,8 @@ class PacketReader {
         // thread with an unbounded queue.
         listenerExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
 
-            public Thread newThread(Runnable runnable) {
+            @Override
+			public Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable,
                         "Smack Listener Processor (" + connection.connectionCounterValue + ")");
                 thread.setDaemon(true);
@@ -410,7 +416,7 @@ class PacketReader {
                     connection.setAvailableCompressionMethods(PacketParserUtils.parseCompressionMethods(parser));
                 }
                 else if (parser.getName().equals("register")) {
-                    connection.getAccountManager().setSupportsAccountCreation(true);
+                   
                 }
             }
             else if (eventType == XmlPullParser.END_TAG) {
@@ -453,13 +459,14 @@ class PacketReader {
      */
     private class ListenerNotification implements Runnable {
 
-        private Packet packet;
+        private final Packet packet;
 
         public ListenerNotification(Packet packet) {
             this.packet = packet;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             for (ListenerWrapper listenerWrapper : connection.recvListeners.values()) {
                 listenerWrapper.notifyListener(packet);
             }

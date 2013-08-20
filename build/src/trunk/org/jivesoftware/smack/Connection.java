@@ -37,6 +37,8 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 
+import android.accounts.AccountManager;
+
 /**
  * The abstract Connection class provides an interface for connections to a
  * XMPP server and implements shared methods which are used by the
@@ -154,12 +156,8 @@ public abstract class Connection {
     /**
      * The AccountManager allows creation and management of accounts on an XMPP server.
      */
-    private AccountManager accountManager = null;
+    private final AccountManager accountManager = null;
 
-    /**
-     * The ChatManager keeps track of references to all current chats.
-     */
-    protected ChatManager chatManager = null;
 
 
     /**
@@ -403,30 +401,6 @@ public abstract class Connection {
      */
     public abstract void sendPacket(Packet packet);
 
-    /**
-     * Returns an account manager instance for this connection.
-     * 
-     * @return an account manager for this connection.
-     */
-    public AccountManager getAccountManager() {
-        if (accountManager == null) {
-            accountManager = new AccountManager(this);
-        }
-        return accountManager;
-    }
-
-    /**
-     * Returns a chat manager instance for this connection. The ChatManager manages all incoming and
-     * outgoing chats on the current connection.
-     * 
-     * @return a chat manager instance for this connection.
-     */
-    public synchronized ChatManager getChatManager() {
-        if (this.chatManager == null) {
-            this.chatManager = new ChatManager(this);
-        }
-        return this.chatManager;
-    }
 
     /**
      * Returns the roster for the user.
