@@ -22,11 +22,8 @@ package org.jivesoftware.smack;
 
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,10 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jivesoftware.smack.compression.JzlibInputOutputStream;
 import org.jivesoftware.smack.compression.XMPPInputOutputStream;
-import org.jivesoftware.smack.compression.Java7ZlibInputOutputStream;
-import org.jivesoftware.smack.debugger.SmackDebugger;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
@@ -95,7 +89,6 @@ public abstract class Connection {
     private final static Set<ConnectionCreationListener> connectionEstablishedListeners =
             new CopyOnWriteArraySet<ConnectionCreationListener>();
 
-    protected final static List<XMPPInputOutputStream> compressionHandlers = new ArrayList<XMPPInputOutputStream>(2);
 
     /**
      * Value that indicates whether debugging is enabled. When enabled, a debug
@@ -123,10 +116,6 @@ public abstract class Connection {
         }
         // Ensure the SmackConfiguration class is loaded by calling a method in it.
         SmackConfiguration.getVersion();
-        // Add the Java7 compression handler first, since it's preferred
-        compressionHandlers.add(new Java7ZlibInputOutputStream());
-        // If we don't have access to the Java7 API use the JZlib compression handler
-        compressionHandlers.add(new JzlibInputOutputStream());
     }
 
     /**
@@ -172,10 +161,6 @@ public abstract class Connection {
      */
     protected ChatManager chatManager = null;
 
-    /**
-     * The SmackDebugger allows to log and debug XML traffic.
-     */
-    protected SmackDebugger debugger = null;
 
     /**
      * The Reader which is used for the {@see debugger}.
@@ -756,66 +741,7 @@ public abstract class Connection {
      * @throws IllegalArgumentException if the SmackDebugger can't be loaded.
      */
     protected void initDebugger() {
-        if (reader == null || writer == null) {
-            throw new NullPointerException("Reader or writer isn't initialized.");
-        }
-        // If debugging is enabled, we open a window and write out all network traffic.
-        if (config.isDebuggerEnabled()) {
-            if (debugger == null) {
-                // Detect the debugger class to use.
-                String className = null;
-                // Use try block since we may not have permission to get a system
-                // property (for example, when an applet).
-                try {
-                    className = System.getProperty("smack.debuggerClass");
-                }
-                catch (Throwable t) {
-                    // Ignore.
-                }
-                Class<?> debuggerClass = null;
-                if (className != null) {
-                    try {
-                        debuggerClass = Class.forName(className);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (debuggerClass == null) {
-                    try {
-                        debuggerClass =
-                                Class.forName("de.measite.smack.AndroidDebugger");
-                    }
-                    catch (Exception ex) {
-                        try {
-                            debuggerClass =
-                                    Class.forName("org.jivesoftware.smack.debugger.ConsoleDebugger");
-                        }
-                        catch (Exception ex2) {
-                            ex2.printStackTrace();
-                        }
-                    }
-                }
-                // Create a new debugger instance. If an exception occurs then disable the debugging
-                // option
-                try {
-                    Constructor<?> constructor = debuggerClass
-                            .getConstructor(Connection.class, Writer.class, Reader.class);
-                    debugger = (SmackDebugger) constructor.newInstance(this, writer, reader);
-                    reader = debugger.getReader();
-                    writer = debugger.getWriter();
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("Can't initialize the configured debugger!", e);
-                }
-            }
-            else {
-                // Obtain new reader and writer from the existing debugger
-                reader = debugger.newConnectionReader(reader);
-                writer = debugger.newConnectionWriter(writer);
-            }
-        }
-        
+       
     }
 
     /**
@@ -847,8 +773,8 @@ public abstract class Connection {
      */
     protected static class ListenerWrapper {
 
-        private PacketListener packetListener;
-        private PacketFilter packetFilter;
+        private final PacketListener packetListener;
+        private final PacketFilter packetFilter;
 
         /**
          * Create a class which associates a packet filter with a listener.
@@ -878,8 +804,8 @@ public abstract class Connection {
      */
     protected static class InterceptorWrapper {
 
-        private PacketInterceptor packetInterceptor;
-        private PacketFilter packetFilter;
+        private final PacketInterceptor packetInterceptor;
+        private final PacketFilter packetFilter;
 
         /**
          * Create a class which associates a packet filter with an interceptor.
@@ -892,7 +818,8 @@ public abstract class Connection {
             this.packetFilter = packetFilter;
         }
 
-        public boolean equals(Object object) {
+        @Override
+		public boolean equals(Object object) {
             if (object == null) {
                 return false;
             }
