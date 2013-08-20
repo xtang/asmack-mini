@@ -48,7 +48,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.sun.net.httpserver.Authenticator.Failure;
 
 /**
  * Utility class that helps to parse packets. Any parsing packets method that must be shared
