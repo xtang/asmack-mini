@@ -45,9 +45,10 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.sasl.SASLMechanism.Failure;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import com.sun.net.httpserver.Authenticator.Failure;
 
 /**
  * Utility class that helps to parse packets. Any parsing packets method that must be shared
@@ -663,32 +664,32 @@ public class PacketParserUtils {
         return properties;
     }
 
-    /**
-     * Parses SASL authentication error packets.
-     * 
-     * @param parser the XML parser.
-     * @return a SASL Failure packet.
-     * @throws Exception if an exception occurs while parsing the packet.
-     */
-    public static Failure parseSASLFailure(XmlPullParser parser) throws Exception {
-        String condition = null;
-        boolean done = false;
-        while (!done) {
-            int eventType = parser.next();
-
-            if (eventType == XmlPullParser.START_TAG) {
-                if (!parser.getName().equals("failure")) {
-                    condition = parser.getName();
-                }
-            }
-            else if (eventType == XmlPullParser.END_TAG) {
-                if (parser.getName().equals("failure")) {
-                    done = true;
-                }
-            }
-        }
-        return new Failure(condition);
-    }
+//    /**
+//     * Parses SASL authentication error packets.
+//     * 
+//     * @param parser the XML parser.
+//     * @return a SASL Failure packet.
+//     * @throws Exception if an exception occurs while parsing the packet.
+//     */
+//    public static Failure parseSASLFailure(XmlPullParser parser) throws Exception {
+//        String condition = null;
+//        boolean done = false;
+//        while (!done) {
+//            int eventType = parser.next();
+//
+//            if (eventType == XmlPullParser.START_TAG) {
+//                if (!parser.getName().equals("failure")) {
+//                    condition = parser.getName();
+//                }
+//            }
+//            else if (eventType == XmlPullParser.END_TAG) {
+//                if (parser.getName().equals("failure")) {
+//                    done = true;
+//                }
+//            }
+//        }
+//        return new Failure(condition);
+//    }
 
     /**
      * Parses stream error packets.

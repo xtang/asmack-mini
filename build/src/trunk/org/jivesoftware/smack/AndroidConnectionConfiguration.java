@@ -1,14 +1,15 @@
 package org.jivesoftware.smack;
 
 import java.io.File;
-
-import android.os.Build;
+import java.util.List;
 
 import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
 
-import java.util.List;
+import android.os.Build;
+
+
 
 /**
  * This class wraps DNS SRV lookups for a new ConnectionConfiguration in a 

@@ -36,11 +36,11 @@ public class ProxyInfo
         SOCKS5
     }
     
-    private String proxyAddress;
-    private int proxyPort;
-    private String proxyUsername;
-    private String proxyPassword;
-    private ProxyType proxyType;
+    private final String proxyAddress;
+    private final int proxyPort;
+    private final String proxyUsername;
+    private final String proxyPassword;
+    private final ProxyType proxyType;
     
     public ProxyInfo(   ProxyType pType, String pHost, int pPort, String pUser, 
                         String pPass)
@@ -110,18 +110,6 @@ public class ProxyInfo
         if(proxyType == ProxyType.NONE)
         {
             return new DirectSocketFactory();
-        }
-        else if(proxyType == ProxyType.HTTP)
-        {
-            return new HTTPProxySocketFactory(this);
-        }
-        else if(proxyType == ProxyType.SOCKS4)
-        {
-            return new Socks4ProxySocketFactory(this);
-        }
-        else if(proxyType == ProxyType.SOCKS5)
-        {
-            return new Socks5ProxySocketFactory(this);
         }
         else
         {

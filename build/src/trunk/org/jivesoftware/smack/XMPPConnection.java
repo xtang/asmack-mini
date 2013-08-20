@@ -236,18 +236,7 @@ public class XMPPConnection extends Connection {
         username = username.toLowerCase().trim();
 
         String response;
-        if (config.isSASLAuthenticationEnabled() &&
-                saslAuthentication.hasNonAnonymousAuthentication()) {
-            // Authenticate using SASL
-            if (password != null) {
-                response = saslAuthentication.authenticate(username, password, resource);
-            }
-            else {
-                response = saslAuthentication
-                        .authenticate(username, resource, config.getCallbackHandler());
-            }
-        }
-        else {
+       {
             // Authenticate using Non-SASL
             response = new NonSASLAuthentication(this).authenticate(username, password, resource);
         }
@@ -294,11 +283,7 @@ public class XMPPConnection extends Connection {
         }
 
         String response;
-        if (config.isSASLAuthenticationEnabled() &&
-                saslAuthentication.hasAnonymousAuthentication()) {
-            response = saslAuthentication.authenticateAnonymously();
-        }
-        else {
+        {
             // Authenticate using Non-SASL
             response = new NonSASLAuthentication(this).authenticateAnonymously();
         }
@@ -396,7 +381,7 @@ public class XMPPConnection extends Connection {
         reader = null;
         writer = null;
 
-        saslAuthentication.init();
+        //saslAuthentication.init();
     }
 
     @Override

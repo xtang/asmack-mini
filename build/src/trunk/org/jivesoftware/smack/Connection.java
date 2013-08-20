@@ -173,11 +173,6 @@ public abstract class Connection {
 
 
     /**
-     * The SASLAuthentication manager that is responsible for authenticating with the server.
-     */
-    protected SASLAuthentication saslAuthentication = new SASLAuthentication(this);
-
-    /**
      * A number to uniquely identify connections that are created. This is distinct from the
      * connection ID, which is a value sent by the server once a connection is made.
      */
@@ -399,17 +394,6 @@ public abstract class Connection {
 
 
    
-    
-    /**
-     * Returns the SASLAuthentication manager that is responsible for authenticating with
-     * the server.
-     * 
-     * @return the SASLAuthentication manager that is responsible for authenticating with
-     *         the server.
-     */
-    public SASLAuthentication getSASLAuthentication() {
-        return saslAuthentication;
-    }
 
     /**
      * Closes the connection by setting presence to unavailable then closing the connection to
