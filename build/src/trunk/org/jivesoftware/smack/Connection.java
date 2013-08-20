@@ -170,10 +170,6 @@ public abstract class Connection {
      */
     protected Writer writer;
     
-    /**
-     * The permanent storage for the roster
-     */
-    protected RosterStorage rosterStorage;
 
 
     /**
@@ -402,26 +398,7 @@ public abstract class Connection {
     public abstract void sendPacket(Packet packet);
 
 
-    /**
-     * Returns the roster for the user.
-     * <p>
-     * This method will never return <code>null</code>, instead if the user has not yet logged into
-     * the server or is logged in anonymously all modifying methods of the returned roster object
-     * like {@link Roster#createEntry(String, String, String[])},
-     * {@link Roster#removeEntry(RosterEntry)} , etc. except adding or removing
-     * {@link RosterListener}s will throw an IllegalStateException.
-     * 
-     * @return the user's roster.
-     */
-    public abstract Roster getRoster();
-    
-    /**
-     * Set the store for the roster of this connection. If you set the roster storage
-     * of a connection you enable support for XEP-0237 (RosterVersioning)
-     * @param store the store used for roster versioning
-     * @throws IllegalStateException if you add a roster store when roster is initializied
-     */
-    public abstract void setRosterStorage(RosterStorage storage) throws IllegalStateException;
+   
     
     /**
      * Returns the SASLAuthentication manager that is responsible for authenticating with
