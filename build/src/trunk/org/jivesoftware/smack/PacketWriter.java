@@ -20,12 +20,12 @@
 
 package org.jivesoftware.smack;
 
-import org.jivesoftware.smack.packet.Packet;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
+import org.jivesoftware.smack.packet.Packet;
 
 /**
  * Writes packets to a XMPP server. Packets are sent using a dedicated thread. Packet
@@ -42,7 +42,7 @@ class PacketWriter {
     private Thread writerThread;
     private Thread keepAliveThread;
     private Writer writer;
-    private XMPPConnection connection;
+    private final XMPPConnection connection;
     private final BlockingQueue<Packet> queue;
     volatile boolean done;
 
@@ -66,7 +66,8 @@ class PacketWriter {
         done = false;
 
         writerThread = new Thread() {
-            public void run() {
+            @Override
+			public void run() {
                 writePackets(this);
             }
         };
@@ -81,6 +82,7 @@ class PacketWriter {
      */
     public void sendPacket(Packet packet) {
         if (!done) {
+        	System.out.println(packet.toXML());
             // Invoke interceptors for the new packet that is about to be sent. Interceptors
             // may modify the content of the packet.
             connection.firePacketInterceptors(packet);
