@@ -62,7 +62,7 @@ public class PingManager {
             Collections.synchronizedMap(new WeakHashMap<Connection, PingManager>());
     
     static {
-ProviderManager.getInstance().addIQProvider(elementName, namespace, provider);
+    	ProviderManager.getInstance().addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
         Connection.addConnectionCreationListener(new ConnectionCreationListener() {
             @Override
 			public void connectionCreated(Connection connection) {
