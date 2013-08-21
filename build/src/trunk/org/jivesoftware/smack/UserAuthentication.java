@@ -66,14 +66,4 @@ interface UserAuthentication {
      */
     String authenticate(String username, String password, String resource) throws
             XMPPException;
-
-    /**
-     * Performs an anonymous authentication with the server. The server will created a new full JID
-     * for this connection. An exception will be thrown if the server does not support anonymous
-     * authentication.
-     *
-     * @return the full JID provided by the server while binding a resource for the connection.
-     * @throws XMPPException if an error occures while authenticating.
-     */
-    String authenticateAnonymously() throws XMPPException;
 }

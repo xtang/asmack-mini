@@ -20,17 +20,27 @@
 
 package org.jivesoftware.smack;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.harmony.javax.security.auth.callback.CallbackHandler;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.Bind;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Session;
-import org.jivesoftware.smack.sasl.*;
-
-import org.apache.harmony.javax.security.auth.callback.CallbackHandler;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.*;
+import org.jivesoftware.smack.sasl.SASLAnonymous;
+import org.jivesoftware.smack.sasl.SASLCramMD5Mechanism;
+import org.jivesoftware.smack.sasl.SASLDigestMD5Mechanism;
+import org.jivesoftware.smack.sasl.SASLExternalMechanism;
+import org.jivesoftware.smack.sasl.SASLGSSAPIMechanism;
+import org.jivesoftware.smack.sasl.SASLMechanism;
+import org.jivesoftware.smack.sasl.SASLPlainMechanism;
 
 /**
  * <p>This class is responsible authenticating the user using SASL, binding the resource
@@ -66,7 +76,7 @@ public class SASLAuthentication implements UserAuthentication {
     private static Map<String, Class<? extends SASLMechanism>> implementedMechanisms = new HashMap<String, Class<? extends SASLMechanism>>();
     private static List<String> mechanismsPreferences = new ArrayList<String>();
 
-    private Connection connection;
+    private final Connection connection;
     private Collection<String> serverMechanisms = new ArrayList<String>();
     private SASLMechanism currentMechanism = null;
     /**
@@ -213,7 +223,8 @@ public class SASLAuthentication implements UserAuthentication {
      * @return the full JID provided by the server while binding a resource to the connection.
      * @throws XMPPException if an error occures while authenticating.
      */
-    public String authenticate(String username, String resource, CallbackHandler cbh) 
+    @Override
+	public String authenticate(String username, String resource, CallbackHandler cbh) 
             throws XMPPException {
         // Locate the SASLMechanism to use
         String selectedMechanism = null;
@@ -295,7 +306,8 @@ public class SASLAuthentication implements UserAuthentication {
      * @return the full JID provided by the server while binding a resource to the connection.
      * @throws XMPPException if an error occures while authenticating.
      */
-    public String authenticate(String username, String password, String resource)
+    @Override
+	public String authenticate(String username, String password, String resource)
             throws XMPPException {
         // Locate the SASLMechanism to use
         String selectedMechanism = null;
@@ -348,9 +360,7 @@ public class SASLAuthentication implements UserAuthentication {
                     return bindResourceAndEstablishSession(resource);
                 }
                 else {
-                    // SASL authentication failed so try a Non-SASL authentication
-                    return new NonSASLAuthentication(connection)
-                            .authenticate(username, password, resource);
+                    throw new XMPPException("saslNegotiated failed.");
                 }
             }
             catch (XMPPException e) {
@@ -358,67 +368,16 @@ public class SASLAuthentication implements UserAuthentication {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                // SASL authentication failed so try a Non-SASL authentication
-                return new NonSASLAuthentication(connection)
-                        .authenticate(username, password, resource);
+                throw new XMPPException("saslNegotiated failed.");
             }
         }
         else {
             // No SASL method was found so try a Non-SASL authentication
-            return new NonSASLAuthentication(connection).authenticate(username, password, resource);
+        	throw new XMPPException("saslNegotiated failed.");
         }
     }
 
-    /**
-     * Performs ANONYMOUS SASL authentication. If SASL authentication was successful
-     * then resource binding and session establishment will be performed. This method will return
-     * the full JID provided by the server while binding a resource to the connection.<p>
-     *
-     * The server will assign a full JID with a randomly generated resource and possibly with
-     * no username.
-     *
-     * @return the full JID provided by the server while binding a resource to the connection.
-     * @throws XMPPException if an error occures while authenticating.
-     */
-    public String authenticateAnonymously() throws XMPPException {
-        try {
-            currentMechanism = new SASLAnonymous(this);
-            currentMechanism.authenticate(null,null,"");
-
-            // Wait until SASL negotiation finishes
-            synchronized (this) {
-                if (!saslNegotiated && !saslFailed) {
-                    try {
-                        wait(5000);
-                    }
-                    catch (InterruptedException e) {
-                        // Ignore
-                    }
-                }
-            }
-
-            if (saslFailed) {
-                // SASL authentication failed and the server may have closed the connection
-                // so throw an exception
-                if (errorCondition != null) {
-                    throw new XMPPException("SASL authentication failed: " + errorCondition);
-                }
-                else {
-                    throw new XMPPException("SASL authentication failed");
-                }
-            }
-
-            if (saslNegotiated) {
-                // Bind a resource for this connection and
-                return bindResourceAndEstablishSession(null);
-            }
-            else {
-                return new NonSASLAuthentication(connection).authenticateAnonymously();
-            }
-        } catch (IOException e) {
-            return new NonSASLAuthentication(connection).authenticateAnonymously();
-        }
-    }
+   
 
     private String bindResourceAndEstablishSession(String resource) throws XMPPException {
         // Wait until server sends response containing the <bind> element
@@ -528,7 +487,8 @@ public class SASLAuthentication implements UserAuthentication {
      * 
      * @deprecated replaced by {@see #authenticationFailed(String)}.
      */
-    void authenticationFailed() {
+    @Deprecated
+	void authenticationFailed() {
         authenticationFailed(null);
     }
 

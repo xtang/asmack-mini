@@ -2,8 +2,6 @@ package org.jivesoftware.smack;
 
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.DNSJavaResolver;
-import org.jivesoftware.smackx.ConfigureProviderManager;
-import org.jivesoftware.smackx.InitStaticCode;
 import org.xbill.DNS.ResolverConfig;
 
 import android.content.BroadcastReceiver;
@@ -15,13 +13,11 @@ public class SmackAndroid {
     private static SmackAndroid sSmackAndroid = null;
 
     private BroadcastReceiver mConnectivityChangedReceiver;
-    private Context mCtx;
+    private final Context mCtx;
 
     private SmackAndroid(Context ctx) {
         mCtx = ctx;
         DNSUtil.setDNSResolver(DNSJavaResolver.getInstance());
-        InitStaticCode.initStaticCode(ctx);
-        ConfigureProviderManager.configureProviderManager();
         maybeRegisterReceiver();
     }
 

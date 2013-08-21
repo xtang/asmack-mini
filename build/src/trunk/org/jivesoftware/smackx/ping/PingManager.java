@@ -32,14 +32,11 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.ping.packet.Ping;
 import org.jivesoftware.smackx.ping.packet.Pong;
 
@@ -65,16 +62,17 @@ public class PingManager {
     
     static {
         Connection.addConnectionCreationListener(new ConnectionCreationListener() {
-            public void connectionCreated(Connection connection) {
+            @Override
+			public void connectionCreated(Connection connection) {
                 new PingManager(connection);
             }
         });
     }
     
     private ScheduledExecutorService periodicPingExecutorService;
-    private Connection connection;
+    private final Connection connection;
     private int pingInterval = SmackConfiguration.getDefaultPingInterval();
-    private Set<PingFailedListener> pingFailedListeners = Collections
+    private final Set<PingFailedListener> pingFailedListeners = Collections
             .synchronizedSet(new HashSet<PingFailedListener>());
     private ScheduledFuture<?> periodicPingTask;
     protected volatile long lastSuccessfulPingByTask = -1;
@@ -89,8 +87,6 @@ public class PingManager {
     private long lastSuccessfulManualPing = -1;
     
     private PingManager(Connection connection) {
-        ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
-        sdm.addFeature(NAMESPACE);
         this.connection = connection;
         init();
     }
@@ -102,7 +98,8 @@ public class PingManager {
             /**
              * Sends a Pong for every Ping
              */
-            public void processPacket(Packet packet) {
+            @Override
+			public void processPacket(Packet packet) {
                 if (pingMinDelta > 0) {
                     // Ping flood protection enabled
                     long currentMillies = System.currentTimeMillis();
@@ -285,22 +282,6 @@ public class PingManager {
         return pingMyServer(SmackConfiguration.getPacketReplyTimeout());
     }
     
-    /**
-     * Returns true if XMPP Ping is supported by a given JID
-     * 
-     * @param jid
-     * @return
-     */
-    public boolean isPingSupported(String jid) {
-        try {
-            DiscoverInfo result =
-                ServiceDiscoveryManager.getInstanceFor(connection).discoverInfo(jid);
-            return result.containsFeature(NAMESPACE);
-        }
-        catch (XMPPException e) {
-            return false;
-        }
-    }
     
     /**
      * Returns the time of the last successful Ping Pong with the 
