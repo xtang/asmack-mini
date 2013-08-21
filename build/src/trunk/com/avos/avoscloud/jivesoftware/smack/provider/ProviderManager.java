@@ -20,16 +20,20 @@
 
 package com.avos.avoscloud.jivesoftware.smack.provider;
 
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlPullParser;
-
-import com.avos.avoscloud.jivesoftware.smack.packet.IQ;
-import com.avos.avoscloud.jivesoftware.smack.packet.PacketExtension;
-
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.avos.avoscloud.jivesoftware.smack.packet.IQ;
 
 /**
  * Manages providers for parsing custom XML sub-documents of XMPP packets. Two types of
@@ -120,8 +124,8 @@ public class ProviderManager {
 
     private static ProviderManager instance;
 
-    private Map<String, Object> extensionProviders = new ConcurrentHashMap<String, Object>();
-    private Map<String, Object> iqProviders = new ConcurrentHashMap<String, Object>();
+    private final Map<String, Object> extensionProviders = new ConcurrentHashMap<String, Object>();
+    private final Map<String, Object> iqProviders = new ConcurrentHashMap<String, Object>();
 
     /**
      * Returns the only ProviderManager valid instance.  Use {@link #setInstance(ProviderManager)}
@@ -223,21 +227,21 @@ public class ProviderManager {
                                         // a PacketExtension, add the class object itself and
                                         // then we'll use reflection later to create instances
                                         // of the class.
-                                        try {
-                                            // Add the provider to the map.
-                                            Class<?> provider = Class.forName(className);
-                                            if (PacketExtensionProvider.class.isAssignableFrom(
-                                                    provider)) {
-                                                extensionProviders.put(key, provider.newInstance());
-                                            }
-                                            else if (PacketExtension.class.isAssignableFrom(
-                                                    provider)) {
-                                                extensionProviders.put(key, provider);
-                                            }
-                                        }
-                                        catch (ClassNotFoundException cnfe) {
-                                            cnfe.printStackTrace();
-                                        }
+//                                        try {
+//                                            // Add the provider to the map.
+//                                            Class<?> provider = Class.forName(className);
+//                                            if (PacketExtensionProvider.class.isAssignableFrom(
+//                                                    provider)) {
+//                                                extensionProviders.put(key, provider.newInstance());
+//                                            }
+//                                            else if (PacketExtension.class.isAssignableFrom(
+//                                                    provider)) {
+//                                                extensionProviders.put(key, provider);
+//                                            }
+//                                        }
+//                                        catch (ClassNotFoundException cnfe) {
+//                                            cnfe.printStackTrace();
+//                                        }
                                     }
                                 }
                             }
@@ -332,49 +336,7 @@ public class ProviderManager {
         iqProviders.remove(key);
     }
 
-    /**
-     * Returns the packet extension provider registered to the specified XML element name
-     * and namespace. For example, if a provider was registered to the element name "x" and the
-     * namespace "jabber:x:event", then the following packet would trigger the provider:
-     *
-     * <pre>
-     * &lt;message to='romeo@montague.net' id='message_1'&gt;
-     *     &lt;body&gt;Art thou not Romeo, and a Montague?&lt;/body&gt;
-     *     &lt;x xmlns='jabber:x:event'&gt;
-     *         &lt;composing/&gt;
-     *     &lt;/x&gt;
-     * &lt;/message&gt;</pre>
-     *
-     * <p>Note: this method is generally only called by the internal Smack classes.
-     *
-     * @param elementName element name associated with extension provider.
-     * @param namespace namespace associated with extension provider.
-     * @return the extenion provider.
-     */
-    public Object getExtensionProvider(String elementName, String namespace) {
-        String key = getProviderKey(elementName, namespace);
-        return extensionProviders.get(key);
-    }
 
-    /**
-     * Adds an extension provider with the specified element name and name space. The provider
-     * will override any providers loaded through the classpath. The provider must be either
-     * a PacketExtensionProvider instance, or a Class object of a Javabean.
-     *
-     * @param elementName the XML element name.
-     * @param namespace the XML namespace.
-     * @param provider the extension provider.
-     */
-    public void addExtensionProvider(String elementName, String namespace,
-            Object provider)
-    {
-        if (!(provider instanceof PacketExtensionProvider || provider instanceof Class)) {
-            throw new IllegalArgumentException("Provider must be a PacketExtensionProvider " +
-                    "or a Class instance.");
-        }
-        String key = getProviderKey(elementName, namespace);
-        extensionProviders.put(key, provider);
-    }
 
     /**
      * Removes an extension provider with the specified element name and namespace. This

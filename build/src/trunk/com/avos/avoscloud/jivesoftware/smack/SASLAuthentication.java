@@ -28,15 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import com.avos.avoscloud.harmony.javax.security.auth.callback.CallbackHandler;
 import com.avos.avoscloud.jivesoftware.smack.filter.PacketIDFilter;
 import com.avos.avoscloud.jivesoftware.smack.packet.Bind;
 import com.avos.avoscloud.jivesoftware.smack.packet.IQ;
 import com.avos.avoscloud.jivesoftware.smack.packet.Packet;
 import com.avos.avoscloud.jivesoftware.smack.packet.Session;
-import com.avos.avoscloud.jivesoftware.smack.sasl.SASLAnonymous;
-import com.avos.avoscloud.jivesoftware.smack.sasl.SASLCramMD5Mechanism;
 import com.avos.avoscloud.jivesoftware.smack.sasl.SASLDigestMD5Mechanism;
 import com.avos.avoscloud.jivesoftware.smack.sasl.SASLExternalMechanism;
 import com.avos.avoscloud.jivesoftware.smack.sasl.SASLGSSAPIMechanism;
@@ -102,9 +99,9 @@ public class SASLAuthentication implements UserAuthentication {
         registerSASLMechanism("EXTERNAL", SASLExternalMechanism.class);
         registerSASLMechanism("GSSAPI", SASLGSSAPIMechanism.class);
         registerSASLMechanism("DIGEST-MD5", SASLDigestMD5Mechanism.class);
-        registerSASLMechanism("CRAM-MD5", SASLCramMD5Mechanism.class);
+       // registerSASLMechanism("CRAM-MD5", SASLCramMD5Mechanism.class);
         registerSASLMechanism("PLAIN", SASLPlainMechanism.class);
-        registerSASLMechanism("ANONYMOUS", SASLAnonymous.class);
+      //  registerSASLMechanism("ANONYMOUS", SASLAnonymous.class);
 
 //        supportSASLMechanism("GSSAPI",0);
         supportSASLMechanism("DIGEST-MD5",0);

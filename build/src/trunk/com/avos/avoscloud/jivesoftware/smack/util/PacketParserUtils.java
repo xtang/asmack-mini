@@ -35,7 +35,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.avos.avoscloud.jivesoftware.smack.Connection;
 import com.avos.avoscloud.jivesoftware.smack.packet.Authentication;
 import com.avos.avoscloud.jivesoftware.smack.packet.Bind;
-import com.avos.avoscloud.jivesoftware.smack.packet.DefaultPacketExtension;
 import com.avos.avoscloud.jivesoftware.smack.packet.IQ;
 import com.avos.avoscloud.jivesoftware.smack.packet.Message;
 import com.avos.avoscloud.jivesoftware.smack.packet.Packet;
@@ -44,7 +43,6 @@ import com.avos.avoscloud.jivesoftware.smack.packet.Presence;
 import com.avos.avoscloud.jivesoftware.smack.packet.StreamError;
 import com.avos.avoscloud.jivesoftware.smack.packet.XMPPError;
 import com.avos.avoscloud.jivesoftware.smack.provider.IQProvider;
-import com.avos.avoscloud.jivesoftware.smack.provider.PacketExtensionProvider;
 import com.avos.avoscloud.jivesoftware.smack.provider.ProviderManager;
 import com.avos.avoscloud.jivesoftware.smack.sasl.SASLMechanism.Failure;
 
@@ -138,8 +136,8 @@ public class PacketParserUtils {
                 }
                 // Otherwise, it must be a packet extension.
                 else {
-                    message.addExtension(
-                    PacketParserUtils.parsePacketExtension(elementName, namespace, parser));
+//                    message.addExtension(
+//                    PacketParserUtils.parsePacketExtension(elementName, namespace, parser));
                 }
             }
             else if (eventType == XmlPullParser.END_TAG) {
@@ -258,7 +256,7 @@ public class PacketParserUtils {
                 // Otherwise, it must be a packet extension.
                 else {
                 	try {
-                        presence.addExtension(PacketParserUtils.parsePacketExtension(elementName, namespace, parser));
+                     //   presence.addExtension(PacketParserUtils.parsePacketExtension(elementName, namespace, parser));
                 	}
                 	catch (Exception e) {
                 		System.err.println("Failed to parse extension packet in Presence packet.");
@@ -665,7 +663,7 @@ public class PacketParserUtils {
                     	condition = elementName;
                     }
                     else {
-                    	extensions.add(parsePacketExtension(elementName, namespace, parser));
+                    //	extensions.add(parsePacketExtension(elementName, namespace, parser));
                     }
                 }
             }
@@ -687,58 +685,6 @@ public class PacketParserUtils {
             iae.printStackTrace();
         }
         return new XMPPError(Integer.parseInt(errorCode), errorType, condition, message, extensions);
-    }
-
-    /**
-     * Parses a packet extension sub-packet.
-     *
-     * @param elementName the XML element name of the packet extension.
-     * @param namespace the XML namespace of the packet extension.
-     * @param parser the XML parser, positioned at the starting element of the extension.
-     * @return a PacketExtension.
-     * @throws Exception if a parsing error occurs.
-     */
-    public static PacketExtension parsePacketExtension(String elementName, String namespace, XmlPullParser parser)
-            throws Exception
-    {
-        // See if a provider is registered to handle the extension.
-        Object provider = ProviderManager.getInstance().getExtensionProvider(elementName, namespace);
-        if (provider != null) {
-            if (provider instanceof PacketExtensionProvider) {
-                return ((PacketExtensionProvider)provider).parseExtension(parser);
-            }
-            else if (provider instanceof Class) {
-                return (PacketExtension)parseWithIntrospection(
-                        elementName, (Class<?>)provider, parser);
-            }
-        }
-        // No providers registered, so use a default extension.
-        DefaultPacketExtension extension = new DefaultPacketExtension(elementName, namespace);
-        boolean done = false;
-        while (!done) {
-            int eventType = parser.next();
-            if (eventType == XmlPullParser.START_TAG) {
-                String name = parser.getName();
-                // If an empty element, set the value with the empty string.
-                if (parser.isEmptyElementTag()) {
-                    extension.setValue(name,"");
-                }
-                // Otherwise, get the the element text.
-                else {
-                    eventType = parser.next();
-                    if (eventType == XmlPullParser.TEXT) {
-                        String value = parser.getText();
-                        extension.setValue(name, value);
-                    }
-                }
-            }
-            else if (eventType == XmlPullParser.END_TAG) {
-                if (parser.getName().equals(elementName)) {
-                    done = true;
-                }
-            }
-        }
-        return extension;
     }
 
     private static String getLanguageAttribute(XmlPullParser parser) {
