@@ -37,6 +37,7 @@ import com.avos.avoscloud.jivesoftware.smack.filter.PacketIDFilter;
 import com.avos.avoscloud.jivesoftware.smack.filter.PacketTypeFilter;
 import com.avos.avoscloud.jivesoftware.smack.packet.IQ;
 import com.avos.avoscloud.jivesoftware.smack.packet.Packet;
+import com.avos.avoscloud.jivesoftware.smack.provider.ProviderManager;
 import com.avos.avoscloud.jivesoftware.smackx.ping.packet.Ping;
 import com.avos.avoscloud.jivesoftware.smackx.ping.packet.Pong;
 
@@ -61,6 +62,7 @@ public class PingManager {
             Collections.synchronizedMap(new WeakHashMap<Connection, PingManager>());
     
     static {
+ProviderManager.getInstance().addIQProvider(elementName, namespace, provider);
         Connection.addConnectionCreationListener(new ConnectionCreationListener() {
             @Override
 			public void connectionCreated(Connection connection) {
