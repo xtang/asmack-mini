@@ -21,18 +21,17 @@
 package com.avos.smack;
 
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 
 import com.avos.security.auth.callback.CallbackHandler;
 import com.avos.smack.proxy.ProxyInfo;
-import com.avos.smack.util.DNSUtil;
 import com.avos.smack.util.dns.HostAddress;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Configuration to use while establishing the connection to the server. It is possible to
@@ -98,38 +97,10 @@ public class ConnectionConfiguration implements Cloneable {
     protected ProxyInfo proxy;
 
     /**
-     * Creates a new ConnectionConfiguration for the specified service name.
-     * A DNS SRV lookup will be performed to find out the actual host address
-     * and port to use for the connection.
-     *
-     * @param serviceName the name of the service provided by an XMPP server.
-     */
-    public ConnectionConfiguration(String serviceName) {
-        // Perform DNS lookup to get host and port to use
-        hostAddresses = DNSUtil.resolveXMPPDomain(serviceName);
-        init(serviceName, ProxyInfo.forDefaultProxy());
-    }
-
-    /**
      * 
      */
     protected ConnectionConfiguration() {
       /* Does nothing */	
-    }
-
-    /**
-     * Creates a new ConnectionConfiguration for the specified service name 
-     * with specified proxy.
-     * A DNS SRV lookup will be performed to find out the actual host address
-     * and port to use for the connection.
-     *
-     * @param serviceName the name of the service provided by an XMPP server.
-     * @param proxy the proxy through which XMPP is to be connected
-     */
-    public ConnectionConfiguration(String serviceName,ProxyInfo proxy) {
-        // Perform DNS lookup to get host and port to use
-        hostAddresses = DNSUtil.resolveXMPPDomain(serviceName);
-        init(serviceName, proxy);
     }
 
     /**
