@@ -60,7 +60,7 @@ import com.avos.smack.util.dns.HostAddress;
 /**
  * Creates a socket connection to a XMPP server. This is the default connection
  * to a Jabber server and is specified in the XMPP Core (RFC 3920).
- * 
+ *
  * @see Connection
  * @author Matt Tucker
  */
@@ -114,8 +114,8 @@ public class XMPPConnection extends Connection {
 	 * but with no callback handler for password prompting of the keystore. This
 	 * will work in most cases, provided the client is not required to provide a
 	 * certificate to the server.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param config
 	 *            the connection configuration.
 	 */
@@ -137,12 +137,12 @@ public class XMPPConnection extends Connection {
 	 * the server and you must call {@link #connect()}.
 	 * <p>
 	 * <p/>
-	 * 
+	 *
 	 * The CallbackHandler will only be used if the connection requires the
 	 * client provide an SSL certificate to the server. The CallbackHandler must
 	 * handle the PasswordCallback to prompt for a password to unlock the
 	 * keystore containing the SSL certificate.
-	 * 
+	 *
 	 * @param config
 	 *            the connection configuration.
 	 * @param callbackHandler
@@ -174,7 +174,7 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Install a parsing exception callback, which will be invoked once an
 	 * exception is encountered while parsing a stanza
-	 * 
+	 *
 	 * @param callback
 	 *            the callback to install
 	 */
@@ -184,7 +184,7 @@ public class XMPPConnection extends Connection {
 
 	/**
 	 * Get the current active parsing exception callback.
-	 * 
+	 *
 	 * @return the active exception callback or null if there is none
 	 */
 	public ParsingExceptionCallback getParsingExceptionCallback() {
@@ -277,7 +277,7 @@ public class XMPPConnection extends Connection {
 	 * Unlike {@link #disconnect()} the connection's packet reader, packet
 	 * writer, and {@link Roster} will not be removed; thus connection's state
 	 * is kept.
-	 * 
+	 *
 	 * @param unavailablePresence
 	 *            the presence packet to send during shutdown.
 	 */
@@ -361,7 +361,7 @@ public class XMPPConnection extends Connection {
 	 * be invoked every time a packet is about to be sent by this connection.
 	 * Interceptors may modify the packet to be sent. A packet filter determines
 	 * which packets will be delivered to the interceptor.
-	 * 
+	 *
 	 * @param packetInterceptor
 	 *            the packet interceptor to notify of packets about to be sent.
 	 * @param packetFilter
@@ -378,7 +378,7 @@ public class XMPPConnection extends Connection {
 
 	/**
 	 * Removes a packet interceptor.
-	 * 
+	 *
 	 * @param packetInterceptor
 	 *            the packet interceptor to remove.
 	 * @deprecated replaced by
@@ -398,7 +398,7 @@ public class XMPPConnection extends Connection {
 	 * thread that writes packets will be used to invoke the listeners.
 	 * Therefore, each packet listener should complete all operations quickly or
 	 * use a different thread for processing.
-	 * 
+	 *
 	 * @param packetListener
 	 *            the packet listener to notify of sent packets.
 	 * @param packetFilter
@@ -415,7 +415,7 @@ public class XMPPConnection extends Connection {
 
 	/**
 	 * Removes a packet listener for sending packets from this connection.
-	 * 
+	 *
 	 * @param packetListener
 	 *            the packet listener to remove.
 	 * @deprecated replaced by
@@ -493,7 +493,7 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Initializes the connection by creating a packet reader and writer and
 	 * opening a XMPP stream to the server.
-	 * 
+	 *
 	 * @throws XMPPException
 	 *             if establishing a connection to the server fails.
 	 */
@@ -629,7 +629,7 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Returns true if the connection to the server has successfully negotiated
 	 * TLS. Once TLS has been negotiatied the connection has been secured.
-	 * 
+	 *
 	 * @return true if the connection to the server has successfully negotiated
 	 *         TLS.
 	 */
@@ -640,7 +640,7 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Notification message saying that the server supports TLS so confirm the
 	 * server that we want to secure the connection.
-	 * 
+	 *
 	 * @param required
 	 *            true when the server indicates that TLS is required.
 	 */
@@ -669,7 +669,7 @@ public class XMPPConnection extends Connection {
 	 * secure the existing plain connection and perform a handshake. This method
 	 * won't return until the connection has finished the handshake or an error
 	 * occured while securing the connection.
-	 * 
+	 *
 	 * @throws Exception
 	 *             if an exception occurs.
 	 */
@@ -775,7 +775,7 @@ public class XMPPConnection extends Connection {
 
 	/**
 	 * Sets the available stream compression methods offered by the server.
-	 * 
+	 *
 	 * @param methods
 	 *            compression methods offered by the server.
 	 */
@@ -786,10 +786,10 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Returns the compression handler that can be used for one compression
 	 * methods offered by the server.
-	 * 
+	 *
 	 * @return a instance of XMPPInputOutputStream or null if no suitable
 	 *         instance was found
-	 * 
+	 *
 	 */
 	private XMPPInputOutputStream maybeGetCompressionHandler() {
 		return null;
@@ -815,7 +815,7 @@ public class XMPPConnection extends Connection {
 	 * <p/>
 	 * Note: to use stream compression the smackx.jar file has to be present in
 	 * the classpath.
-	 * 
+	 *
 	 * @return true if stream compression negotiation was successful.
 	 */
 	private boolean useCompression() {
@@ -860,7 +860,7 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Start using stream compression since the server has acknowledged stream
 	 * compression.
-	 * 
+	 *
 	 * @throws Exception
 	 *             if there is an exception starting stream compression.
 	 */
@@ -897,7 +897,7 @@ public class XMPPConnection extends Connection {
 	 * <p/>
 	 * Listeners will be preserved from a previous connection if the
 	 * reconnection occurs after an abrupt termination.
-	 * 
+	 *
 	 * @throws XMPPException
 	 *             if an error occurs while trying to establish the connection.
 	 *             Two possible errors can occur which will be wrapped by an
@@ -921,7 +921,7 @@ public class XMPPConnection extends Connection {
 
 	/**
 	 * Sets whether the connection has already logged in the server.
-	 * 
+	 *
 	 * @param wasAuthenticated
 	 *            true if the connection has already been authenticated.
 	 */
@@ -934,11 +934,12 @@ public class XMPPConnection extends Connection {
 	/**
 	 * Sends out a notification that there was an error with the connection and
 	 * closes the connection. Also prints the stack trace of the given exception
-	 * 
+	 *
 	 * @param e
 	 *            the exception that causes the connection close event.
 	 */
 	synchronized void notifyConnectionError(Exception e) {
+		try{
 		// Listeners were already notified of the exception, return right here.
 		if (packetReader.done && packetWriter.done)
 			return;
@@ -958,6 +959,9 @@ public class XMPPConnection extends Connection {
 				// from a faulty listener
 				e2.printStackTrace();
 			}
+		}
+		}catch(Throwable e){
+			//ignore
 		}
 	}
 
